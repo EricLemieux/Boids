@@ -16,26 +16,26 @@ void Server::Activate(const char*)
     sockDesc = new RakNet::SocketDescriptor(serverPort, NULL);
 	sockDesc->socketFamily = AF_INET;
 
-	interface = RakNet::RakPeerInterface::GetInstance();
-	RakNet::StartupResult res = interface->Startup(maxConnections, sockDesc, 1);
+	netInterface = RakNet::RakPeerInterface::GetInstance();
+	RakNet::StartupResult res = netInterface->Startup(maxConnections, sockDesc, 1);
 
-	interface->SetMaximumIncomingConnections(maxConnections);
+	netInterface->SetMaximumIncomingConnections(maxConnections);
 
 	assert(res == RakNet::RAKNET_STARTED && "Server Could Not Start.\n");
 
 	std::cout << "Server Started.\n";
 
-	interface->SetIncomingPassword(password, strlen(password));
+	netInterface->SetIncomingPassword(password, strlen(password));
 }
 
 void Server::Send(std::string message)
 {
-    interface->Send(message.c_str(), message.length(), HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
+	netInterface->Send(message.c_str(), message.length(), HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
 }
 
 std::string Server::Recieve()
 {
-    while ((packet = interface->Receive()) != NULL)
+	while ((packet = netInterface->Receive()) != NULL)
 	{
 		if (packet->data[0] == ID_NEW_INCOMING_CONNECTION)
 		{
@@ -54,8 +54,10 @@ std::string Server::Recieve()
             std::string str = std::string((char*)packet->data).substr(0, packet->length);
 
 		}
-		interface->DeallocatePacket(packet);
+		netInterface->DeallocatePacket(packet);
     }
+
+	return std::string("");
 }
 
 std::string Server::GetType()

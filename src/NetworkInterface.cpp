@@ -22,7 +22,7 @@ void NetworkInterface::Send(std::string)
 
 std::string NetworkInterface::Recieve()
 {
-
+	return std::string("");
 }
 
 std::string NetworkInterface::GetType()

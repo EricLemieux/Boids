@@ -21,7 +21,7 @@ class NetworkInterface
         static const int serverPort = 8080;
         const char* password = "cats";
 
-        RakNet::RakPeerInterface* interface;
+        RakNet::RakPeerInterface* netInterface;
         RakNet::SocketDescriptor* sockDesc;
 
         RakNet::Packet* packet;
