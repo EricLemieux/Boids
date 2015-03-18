@@ -3,15 +3,21 @@
 
 // Headers
 #include <GL/glew.h>
+#include <GL/gl.h>
 #include <SDL2/SDL.h>
 #include <iostream>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 // Shader sources
 const GLchar* vertexSource =
     "#version 150 core\n"
     "in vec2 position;"
+    "uniform mat4 trans;"
     "void main() {"
-    "   gl_Position = vec4(position, 0.0, 1.0);"
+    "   gl_Position = trans * vec4(position, 0.0, 1.0);"
     "}";
 const GLchar* fragmentSource =
     "#version 150 core\n"
@@ -30,8 +36,8 @@ int main()
     return 1;
     }
     //SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
     /*SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);*/
     win = SDL_CreateWindow("Boids", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, SDL_WINDOW_OPENGL);
@@ -85,12 +91,30 @@ int main()
     glEnableVertexAttribArray(posAttrib);
     glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
+    float time = 0.0f;
+
+    SDL_Event event;
     while (true)
     {
+        time += 0.0001f;
+
+        if(SDL_PollEvent(&event))
+        {
+            if(event.type == SDL_QUIT)
+            {
+                break;
+            }
+        }
 
         // Clear the screen to black
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        //Transformations
+        glm::mat4 trans = glm::mat4();
+        trans = glm::rotate(trans, glm::degrees(time * 180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        GLint uTrans = glGetUniformLocation(shaderProgram, "trans");
+        glUniformMatrix4fv(uTrans, 1, GL_FALSE, glm::value_ptr(trans));
 
         // Draw a triangle from the 3 vertices
         glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -106,4 +130,10 @@ int main()
     glDeleteBuffers(1, &vbo);
 
     glDeleteVertexArrays(1, &vao);
+
+    SDL_GL_DeleteContext(context);
+    SDL_DestroyWindow(win);
+    SDL_Quit();
+
+    return 0;
 }
