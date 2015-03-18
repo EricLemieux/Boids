@@ -72,6 +72,16 @@ int main()
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
+    unsigned int index[] = {
+        0, 1, 2
+    };
+
+    //IBO
+    GLuint ibo;
+    glGenBuffers(1, &ibo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index) * sizeof(unsigned int), index, GL_STATIC_DRAW);
+
     // Create and compile the vertex shader
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, &vertexSource, NULL);
@@ -94,6 +104,8 @@ int main()
     GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
     glEnableVertexAttribArray(posAttrib);
     glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+    GLint uTrans = glGetUniformLocation(shaderProgram, "trans");
 
     float time = 0.0f;
 
@@ -143,14 +155,20 @@ int main()
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        //Transformations
+        //Triangle 1
         glm::mat4 trans = glm::mat4();
         trans = glm::rotate(trans, glm::degrees(time * 180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-        GLint uTrans = glGetUniformLocation(shaderProgram, "trans");
         glUniformMatrix4fv(uTrans, 1, GL_FALSE, glm::value_ptr(trans));
+        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 
-        // Draw a triangle from the 3 vertices
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        //Triangle 2
+        trans = glm::mat4();
+        trans = glm::rotate(trans, glm::degrees(time * 100.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        glUniformMatrix4fv(uTrans, 1, GL_FALSE, glm::value_ptr(trans));
+        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+
+        if(glGetError() == GL_INVALID_OPERATION)
+            cout<<"Invalid operation\n";
 
         // Swap buffers
         SDL_GL_SwapWindow(win);
