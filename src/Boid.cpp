@@ -3,7 +3,11 @@
 Boid::Boid()
 {
     trans = glm::mat4();
-    speed = 0.1f;
+    speed = 0.001f;
+
+    influenceOrientation.x = float(rand()*2);
+    influenceOrientation.y = float(rand()*2);
+    influenceOrientation.z = float(rand()*2);
 }
 
 Boid::~Boid()
@@ -32,6 +36,4 @@ void Boid::Update()
     trans[2][2] = newForward[2];
 
     trans[3] += glm::vec4(newForward * speed, 0.0f);
-
-    //trans[3] += glm::vec4(velocity,0.0f);
 }

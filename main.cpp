@@ -22,10 +22,10 @@
 // Shader sources
 const GLchar* vertexSource =
     "#version 150 core\n"
-    "in vec2 position;"
+    "in vec3 position;"
     "uniform mat4 trans;"
     "void main() {"
-    "   gl_Position = trans * vec4(position, 0.0, 1.0);"
+    "   gl_Position = trans * vec4(position, 1.0);"
     "}";
 const GLchar* fragmentSource =
     "#version 150 core\n"
@@ -36,6 +36,8 @@ const GLchar* fragmentSource =
 using namespace std;
 int main()
 {
+    srand(time(NULL));
+
     SDL_Window* win;
     SDL_GLContext context;
     if(SDL_Init(SDL_INIT_EVERYTHING) != 0)
@@ -68,13 +70,13 @@ int main()
     glGenBuffers(1, &vbo);
 
     GLfloat vertices[] = {
-        0.0f, 0.5f,
-        0.5f, -0.5f,
-        -0.5f, -0.5f
+        0.05f, 0.05f, -0.05f,
+        0.05f, -0.05f, 0.0f,
+        -0.05f, -0.05f, 0.0f
     };
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices) * sizeof(float), vertices, GL_STATIC_DRAW);
 
     unsigned int index[] = {
         0, 1, 2
@@ -107,7 +109,7 @@ int main()
     // Specify the layout of the vertex data
     GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
     glEnableVertexAttribArray(posAttrib);
-    glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
     GLint uTrans = glGetUniformLocation(shaderProgram, "trans");
 
