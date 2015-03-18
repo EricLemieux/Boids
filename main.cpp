@@ -11,6 +11,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "NetworkInterface.h"
+#include "Server.h"
+#include "Client.h"
+
 // Shader sources
 const GLchar* vertexSource =
     "#version 150 core\n"
@@ -92,6 +96,35 @@ int main()
     glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
     float time = 0.0f;
+
+    //Set up the network stuff
+    NetworkInterface* net;
+    cout<<"Should this computer act as the Server or Client?\n 1 for server, 2 for client.\n";
+
+    int selection;
+    while(true)
+    {
+        cin>>selection;
+        if(selection == 1)
+        {
+            net = new Server();
+            break;
+        }
+        else if(selection == 2)
+        {
+            net = new Client();
+            break;
+        }
+    }
+
+    string ip = "localhost";
+    if(selection == 2)
+    {
+        cout<<"please enter the ip of the server.\n";
+        cin>>ip;
+    }
+
+    net->Activate(ip.c_str());
 
     SDL_Event event;
     while (true)
