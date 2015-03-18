@@ -15,6 +15,9 @@
 #include "Server.h"
 #include "Client.h"
 
+#include "Flock.h"
+#include "Boid.h"
+
 // Shader sources
 const GLchar* vertexSource =
     "#version 150 core\n"
@@ -138,6 +141,10 @@ int main()
 
     net->Activate(ip.c_str());
 
+    Flock* myFlock = new Flock();
+
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
     SDL_Event event;
     while (true)
     {
@@ -151,24 +158,15 @@ int main()
             }
         }
 
-        // Clear the screen to black
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        //Triangle 1
-        glm::mat4 trans = glm::mat4();
-        trans = glm::rotate(trans, glm::degrees(time * 180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-        glUniformMatrix4fv(uTrans, 1, GL_FALSE, glm::value_ptr(trans));
-        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+        myFlock->Update();
 
-        //Triangle 2
-        trans = glm::mat4();
-        trans = glm::rotate(trans, glm::degrees(time * 100.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-        glUniformMatrix4fv(uTrans, 1, GL_FALSE, glm::value_ptr(trans));
-        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
-
-        if(glGetError() == GL_INVALID_OPERATION)
-            cout<<"Invalid operation\n";
+        for(unsigned int i = 0; i < 100; ++i)
+        {
+            glUniformMatrix4fv(uTrans, 1, GL_FALSE, glm::value_ptr(myFlock->members[i]->GetTransformation()));
+            glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+        }
 
         // Swap buffers
         SDL_GL_SwapWindow(win);
