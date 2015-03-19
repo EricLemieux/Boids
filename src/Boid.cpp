@@ -26,7 +26,7 @@ Boid::~Boid()
     //dtor
 }
 
-void Boid::Update(std::array<Boid*, 100> otherBoids)
+void Boid::Update(std::array<Boid*, BOID_COUNT> otherBoids)
 {
     boidList = otherBoids;
 
@@ -41,7 +41,7 @@ void Boid::Update(std::array<Boid*, 100> otherBoids)
     glm::vec3 sum2(0,0,0);
 
 
-    for(unsigned int i = 0; i < 100; ++i)
+    for(unsigned int i = 0; i < BOID_COUNT; ++i)
     {
 
         glm::vec3 diff = this->pos - boidList[i]->GetPos();

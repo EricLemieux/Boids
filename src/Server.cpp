@@ -33,7 +33,7 @@ void Server::Send(std::string message)
 	netInterface->Send(message.c_str(), message.length(), HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
 }
 
-void Server::Recieve(Boid* flock[100])
+void Server::Recieve(Boid* flock[BOID_COUNT])
 {
 	while ((packet = netInterface->Receive()) != NULL)
 	{

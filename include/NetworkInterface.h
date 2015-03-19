@@ -15,7 +15,7 @@ class NetworkInterface
 
         virtual void Activate(const char* address);
         virtual void Send(std::string message);
-        virtual void Recieve(Boid* flock[100]);
+        virtual void Recieve(Boid* flock[BOID_COUNT]);
 
         virtual std::string GetType();
     protected:

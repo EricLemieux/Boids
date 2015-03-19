@@ -7,6 +7,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+static const int BOID_COUNT = 200;
+
 class Boid
 {
     public:
@@ -15,7 +17,7 @@ class Boid
 
         inline glm::mat4 GetTransformation(){return trans;};
 
-        void Update(std::array<Boid*, 100> otherBoids);
+        void Update(std::array<Boid*, BOID_COUNT> otherBoids);
         void RemoteUpdate(glm::vec3 position, glm::vec3 newForward);
 
         inline glm::vec3 GetPos(){return pos;}
@@ -34,7 +36,7 @@ class Boid
 
         glm::vec3 pos;
 
-        std::array<Boid*, 100> boidList;
+        std::array<Boid*, BOID_COUNT> boidList;
 
         void SeperationCalc(int count);
         void AlignmentCalc(int count, glm::vec3 sum);

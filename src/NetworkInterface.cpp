@@ -20,7 +20,7 @@ void NetworkInterface::Send(std::string)
 
 }
 
-void NetworkInterface::Recieve(Boid* flock[100])
+void NetworkInterface::Recieve(Boid* flock[BOID_COUNT])
 {
 }
 

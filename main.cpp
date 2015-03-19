@@ -183,9 +183,9 @@ int main()
 
     Flock* myFlock = new Flock();
 
-    Boid* remoteFlock[100];
+	Boid* remoteFlock[BOID_COUNT];
 
-	for (unsigned int i = 0; i < 100; ++i)
+	for (unsigned int i = 0; i < BOID_COUNT; ++i)
 	{
 		remoteFlock[i] = new Boid();
 	}
@@ -229,7 +229,7 @@ int main()
         glm::vec3 target = glm::vec3(relX * 110.0f, relY * 70.0f,-100.0f);
         myFlock->Update(target);
 
-        for(unsigned int i = 0; i < 100; ++i)
+		for (unsigned int i = 0; i < BOID_COUNT; ++i)
         {
             //Draw the remote flock
 			if (remoteFlock[i]->canDraw)

@@ -29,7 +29,7 @@ void Client::Send(std::string message)
 	netInterface->Send(message.c_str(), message.length(), HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
 }
 
-void Client::Recieve(Boid* flock[100])
+void Client::Recieve(Boid* flock[BOID_COUNT])
 {
 	while ((packet = netInterface->Receive()) != NULL)
     {
@@ -38,7 +38,7 @@ void Client::Recieve(Boid* flock[100])
         int id;
         glm::vec3 pos, forwardVec;
         sscanf(str.c_str(),"%i %f %f %f - %f %f %f",&id,&pos.x,&pos.y,&pos.z,&forwardVec.x, &forwardVec.y, &forwardVec.z);
-		if (id < 100 && id >= 0)
+		if (id < BOID_COUNT && id >= 0)
 		{
 			flock[id]->RemoteUpdate(pos, forwardVec);
 		}
