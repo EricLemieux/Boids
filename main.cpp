@@ -33,10 +33,11 @@ const GLchar* vertexSource =
     "   gl_Position = proj * view * model * vec4(position, 1.0);"
     "}";
 const GLchar* fragmentSource =
-    "#version 150 core\n"
+	"#version 150 core\n"
+	"uniform vec3 colour;"
     "out vec4 outColor;"
     "void main() {"
-    "   outColor = vec4(1.0, 1.0, 1.0, 1.0);"
+    "   outColor = vec4(colour, 1.0);"
     "}";
 using namespace std;
 int main()
@@ -144,6 +145,8 @@ int main()
     GLint uView = glGetUniformLocation(shaderProgram, "view");
     GLint uProj = glGetUniformLocation(shaderProgram, "proj");
 
+	GLint uColour = glGetUniformLocation(shaderProgram, "colour");
+
     glm::mat4 view = glm::lookAt(glm::vec3(0,0,10), glm::vec3(0,0,0), glm::vec3(0,1,0));
     glm::mat4 proj = glm::perspective(glm::radians(60.0f), 1280.0f/720.0f, 0.01f, 10000.0f);
 
@@ -187,6 +190,9 @@ int main()
 		remoteFlock[i] = new Boid();
 	}
 
+	float remoteColour[3] = { 1, 0, 0 };
+	float localColour[3] = { 0, 1, 0};
+
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     SDL_Event event;
@@ -218,6 +224,7 @@ int main()
 			if (remoteFlock[i]->canDraw)
 			{
 				glUniformMatrix4fv(uModel, 1, GL_FALSE, glm::value_ptr(remoteFlock[i]->GetTransformation()));
+				glUniform3fv(uColour, 1, remoteColour);
 				glDrawElements(GL_TRIANGLES, index.size(), GL_UNSIGNED_INT, 0);
 			}
 			//Draw the remote flock
@@ -228,12 +235,13 @@ int main()
 
 			//Draw the local flock
             glUniformMatrix4fv(uModel, 1, GL_FALSE, glm::value_ptr(myFlock->members[i]->GetTransformation()));
+			glUniform3fv(uColour, 1, localColour);
             glDrawElements(GL_TRIANGLES, index.size(), GL_UNSIGNED_INT, 0);
 
 			//Send the local flock to the other computer
             char buffer[512];
             sprintf(buffer, "%i %f %f %f - %f %f %f",i,myFlock->members[i]->GetTransformation()[3].x, myFlock->members[i]->GetTransformation()[3].y, myFlock->members[i]->GetTransformation()[3].z,
-            myFlock->members[i]->GetTransformation()[0][2], myFlock->members[i]->GetTransformation()[1][2], myFlock->members[i]->GetTransformation()[2][2]);
+            myFlock->members[i]->GetTransformation()[2][0], myFlock->members[i]->GetTransformation()[2][1], myFlock->members[i]->GetTransformation()[2][2]);
 
             net->Send(std::string(buffer));
         }

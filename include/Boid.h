@@ -26,7 +26,7 @@ class Boid
     protected:
     private:
         glm::mat4 trans;
-        float maxSpeed = 7.0f;
+        float maxSpeed = 10.0f;
 
         const float deltaTime = 0.01f;
 

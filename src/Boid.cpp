@@ -6,23 +6,19 @@ Boid::Boid()
 
     pos.x = float(rand() % 20 - 10);
     pos.y = float(rand() % 20 - 10);
-    pos.z = -100;
+    pos.z = -50;
 
     target.x = 0;
     target.y = 0;
-    target.z = -100;
+    target.z = -50;
 
     maxForce.x = 10.f;
     maxForce.y = 10.f;
     maxForce.z = 10.f;
 
-    velocity.x = float(rand()% 20 - 10);
-    velocity.y = float(rand()% 20 - 10);
-    velocity.z = float(rand()% 20 - 10);
-
-    //velocity.x = float(1);
-    //velocity.y = float(1);
-    //velocity.z = float(0);
+    velocity.x = float(rand()% 500 - 250);
+    velocity.y = float(rand()% 500 - 250);
+    velocity.z = float(rand()% 500 - 250);
 }
 
 Boid::~Boid()
@@ -90,17 +86,7 @@ void Boid::Update(std::array<Boid*, 100> otherBoids)
 
     glm::vec3 newRight = glm::cross(oldUp, newForward);
     glm::vec3 newUp = glm::cross(newForward, newRight);
-
-	/*trans[0][0] = newRight[0];
-	trans[0][1] = newUp[0];
-	trans[0][2] = newForward[0];
-	trans[1][0] = newRight[1];
-	trans[1][1] = newUp[1];
-	trans[1][2] = newForward[1];
-	trans[2][0] = newRight[2];
-	trans[2][1] = newUp[2];
-	trans[2][2] = newForward[2];*/
-
+	
 	trans[0][0] = newRight[0];
 	trans[0][1] = newRight[1];
 	trans[0][2] = newRight[2];
@@ -126,12 +112,12 @@ void Boid::RemoteUpdate(glm::vec3 position, glm::vec3 newForward)
 	trans[0][0] = newRight[0];
 	trans[0][1] = newRight[1];
 	trans[0][2] = newRight[2];
-	trans[1][0] = newUp[0];
+	trans[1][0] = newUp[2];
 	trans[1][1] = newUp[1];
-	trans[1][2] = newUp[2];
-	trans[2][0] = newForward[0];
+	trans[1][2] = newUp[0];
+	trans[2][0] = newForward[2];
 	trans[2][1] = newForward[1];
-	trans[2][2] = newForward[2];
+	trans[2][2] = newForward[0];
 
     trans[3] = glm::vec4(position, 1.0f);
 
