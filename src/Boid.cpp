@@ -4,13 +4,25 @@ Boid::Boid()
 {
     trans = glm::mat4();
 
-    pos.x = float(rand()*2);
-    pos.y = float(rand()*2);
-    pos.z = float(rand()*2);
+    pos.x = float(rand() % 20 - 10);
+    pos.y = float(rand() % 20 - 10);
+    pos.z = -1000;
 
-    velocity.x = float(rand());
-    velocity.y = float(rand());
-    velocity.z = float(rand());
+    target.x = 0;
+    target.y = 0;
+    target.z = -1000;
+
+    maxForce.x = 10.f;
+    maxForce.y = 10.f;
+    maxForce.z = 10.f;
+
+    velocity.x = float(rand()% 20 - 10);
+    velocity.y = float(rand()% 20 - 10);
+    velocity.z = float(rand()% 20 - 10);
+
+    //velocity.x = float(1);
+    //velocity.y = float(1);
+    //velocity.z = float(0);
 }
 
 Boid::~Boid()
@@ -23,16 +35,19 @@ void Boid::Update(std::array<Boid*, 100> otherBoids)
     boidList = otherBoids;
 
     float minDist = 1.0f;
-    float neighbourDist = 1;
+    float neighbourDist = 5;
 
     int seperationCount = 0;
     int alignmentCount = 0;
 
     steerValue = glm::vec3(0,0,0);
     glm::vec3 sum(0,0,0);
+    glm::vec3 sum2(0,0,0);
+
 
     for(unsigned int i = 0; i < 100; ++i)
     {
+
         glm::vec3 diff = this->pos - boidList[i]->GetPos();
         float d = glm::length(diff);
 
@@ -47,21 +62,26 @@ void Boid::Update(std::array<Boid*, 100> otherBoids)
         if(d > 0 && d < neighbourDist)
         {
             sum += boidList[i]->GetVelocity();
+            sum2 += diff;
             ++alignmentCount;
         }
 
     }
 
+    glm::vec3 targetForce = target - this->pos;
+    targetForce = glm::normalize(targetForce) * maxForce;
+    acceleration += targetForce;
+
     SeperationCalc(seperationCount);
     AlignmentCalc(alignmentCount, sum);
-    CohesionCalc(alignmentCount, sum);
+    CohesionCalc(alignmentCount, sum2);
 
-    acceleration = glm::vec3(0.01f, 0.01f, 0.01f);
+    acceleration += glm::vec3(0.01f, 0.01f, 0.01f);
 
-    velocity = acceleration * deltaTime;
+    velocity += acceleration * deltaTime;
     velocity = glm::normalize(velocity);
     velocity *= maxSpeed;
-    pos = velocity * deltaTime;
+    pos += velocity * deltaTime;
     acceleration = glm::vec3(0,0,0);
 
     glm::vec3 newForward = glm::normalize(velocity);
@@ -91,7 +111,7 @@ void Boid::SeperationCalc(int count)
         steerValue = steerValue / glm::vec3(count);
     }
 
-    if(glm::abs(glm::length(steerValue)) > 0)
+    if(glm::length(steerValue) > 0)
     {
         steerValue = glm::normalize(steerValue);
         steerValue = steerValue * maxSpeed;
@@ -105,13 +125,14 @@ void Boid::SeperationCalc(int count)
 
 void Boid::AlignmentCalc(int count, glm::vec3 sum)
 {
-    if(count > 0)
+    if(count > 0 && glm::length(sum) > 0)
     {
-        sum *= 1/count;
+        sum *= (float)1/(float)count;
         sum = glm::normalize(sum);
         sum *= maxSpeed;
         glm::vec3 steer = sum - velocity;
-        steer = glm::normalize(steer);
+        if(glm::length(steer) > 0)
+            steer = glm::normalize(steer);
         steer *= maxForce;
 
         acceleration += steer;
@@ -120,13 +141,14 @@ void Boid::AlignmentCalc(int count, glm::vec3 sum)
 
 void Boid::CohesionCalc(int count, glm::vec3 sum)
 {
-    if(count > 0)
+    if(count > 0 && glm::length(sum)>0)
     {
-        sum *= 1/count;
+        sum *= (float)1/(float)count;
         sum = glm::normalize(sum);
         sum *= maxSpeed;
         glm::vec3 steer = sum - velocity;
-        steer = glm::normalize(steer);
+        if(glm::length(steer) > 0)
+            steer = glm::normalize(steer);
         steer *= maxForce;
         acceleration += steer;
     }

@@ -23,11 +23,12 @@ class Boid
     protected:
     private:
         glm::mat4 trans;
-        float maxSpeed = 100.0f;
+        float maxSpeed = 7.0f;
 
         const float deltaTime = 0.01f;
 
         glm::vec3 pos;
+        glm::vec3 target;
 
         std::array<Boid*, 100> boidList;
 

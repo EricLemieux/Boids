@@ -25,9 +25,11 @@
 const GLchar* vertexSource =
     "#version 150 core\n"
     "in vec3 position;"
-    "uniform mat4 trans;"
+    "uniform mat4 model;"
+    "uniform mat4 view;"
+    "uniform mat4 proj;"
     "void main() {"
-    "   gl_Position = trans * vec4(position, 1.0);"
+    "   gl_Position = proj * view * model * vec4(position, 1.0);"
     "}";
 const GLchar* fragmentSource =
     "#version 150 core\n"
@@ -137,7 +139,12 @@ int main()
     glEnableVertexAttribArray(posAttrib);
     glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-    GLint uTrans = glGetUniformLocation(shaderProgram, "trans");
+    GLint uModel = glGetUniformLocation(shaderProgram, "model");
+    GLint uView = glGetUniformLocation(shaderProgram, "view");
+    GLint uProj = glGetUniformLocation(shaderProgram, "proj");
+
+    glm::mat4 view = glm::lookAt(glm::vec3(0,0,10), glm::vec3(0,0,0), glm::vec3(0,1,0));
+    glm::mat4 proj = glm::perspective(glm::radians(60.0f), 1280.0f/720.0f, 0.01f, 10000.0f);
 
     float time = 0.0f;
 
@@ -199,7 +206,9 @@ int main()
 
         for(unsigned int i = 0; i < 100; ++i)
         {
-            glUniformMatrix4fv(uTrans, 1, GL_FALSE, glm::value_ptr(myFlock->members[i]->GetTransformation()));
+            glUniformMatrix4fv(uModel, 1, GL_FALSE, glm::value_ptr(myFlock->members[i]->GetTransformation()));
+            glUniformMatrix4fv(uView, 1, GL_FALSE, glm::value_ptr(view));
+            glUniformMatrix4fv(uProj, 1, GL_FALSE, glm::value_ptr(proj));
             glDrawElements(GL_TRIANGLES, index.size(), GL_UNSIGNED_INT, 0);
         }
 
