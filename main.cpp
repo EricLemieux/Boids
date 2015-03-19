@@ -163,6 +163,12 @@ int main()
 
         glClear(GL_COLOR_BUFFER_BIT);
 
+        //Get the position of the mouse
+        int x, y;
+        SDL_GetMouseState(&x, &y);
+
+        cout<<"X: "<<x<<"\nY: "<<y<<"\n";
+
         myFlock->Update();
 
         for(unsigned int i = 0; i < 100; ++i)

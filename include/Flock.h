@@ -15,7 +15,7 @@ class Flock
 
         void Update();
 
-        Boid* members[100];
+        std::array<Boid*, 100> members;
     protected:
         glm::vec3 position;
         glm::vec3 velocity;

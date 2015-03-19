@@ -20,12 +20,6 @@ void Flock::Update()
 {
     for(unsigned int i = 0; i < 100; ++i)
     {
-        //Sort the boids
-
-        //Update the boids influenced orientation
-        //TODO
-
-        //Update the boids transformation
-        members[i]->Update();
+        members[i]->Update(members);
     }
 }
