@@ -4,17 +4,17 @@ Boid::Boid()
 {
     trans = glm::mat4();
 
-    pos.x = float(rand() % 20 - 10);
-    pos.y = float(rand() % 20 - 10);
+    pos.x = float(rand() % 200 - 100);
+    pos.y = float(rand() % 200 - 100);
     pos.z = -50;
 
     target.x = 0;
     target.y = 0;
     target.z = -50;
 
-    maxForce.x = 30.f;
-    maxForce.y = 30.f;
-    maxForce.z = 30.f;
+    maxForce.x = 40.f;
+    maxForce.y = 40.f;
+    maxForce.z = 40.f;
 
     velocity.x = float(rand()% 500 - 250);
     velocity.y = float(rand()% 500 - 250);

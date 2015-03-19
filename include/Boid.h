@@ -7,7 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-static const int BOID_COUNT = 200;
+static const int BOID_COUNT = 500;
 
 class Boid
 {
