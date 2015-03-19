@@ -221,8 +221,6 @@ int main()
         relX = (float(x)/(640.0f)) - 1.0f;
         relY = ((float(y)/(360.0f)) - 1.0f) * -1.0f;
 
-        printf("Mouse: %f, %f\n", relX, relY);
-
         //Update the positions of the remote flock
         net->Recieve(remoteFlock);
 

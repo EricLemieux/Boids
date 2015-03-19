@@ -38,7 +38,7 @@ include_directories(${RakNet_INCLUDE_PATH} ${GLEW_INCLUDE_PATH} ${SDL_INCLUDE_PA
 add_executable(Boids ${HDRS} ${SRCS})
 
 target_link_libraries(Boids 
-debug ${RakNet_DEBUG_LIB_PATH}/RakNetLibStatic.lib optimized ${RakNet_RELEASE_LIB_PATH_LIB_PATH}/RakNetLibStatic.lib
+debug ${RakNet_DEBUG_LIB_PATH}/RakNetLibStatic.lib optimized ${RakNet_RELEASE_LIB_PATH}/RakNetLibStatic.lib
 debug ${GLEW_DEBUG_LIB_PATH}/glew32s.lib optimized ${GLEW_RELEASE_LIB_PATH}/glew32s.lib
 debug ${SDL_DEBUG_LIB_PATH}/SDL2.lib optimized ${SDL_RELEASE_LIB_PATH}/SDL2.lib
 OpenGL32.lib
