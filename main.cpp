@@ -7,6 +7,8 @@
 #include <SDL2/SDL.h>
 #undef main
 #include <iostream>
+#include <vector>
+#include <fstream>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -65,28 +67,52 @@ int main()
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
 
+    //Open up the obj file
+    std::fstream file;
+    file.open("Boid.obj", std::fstream::in);
+
+    std::vector<GLfloat> vertices;
+    std::vector<unsigned int> index;
+
+    char buffer[128];
+    while(!file.eof())
+    {
+        file.getline(buffer, 128);
+
+        if(buffer[0] == 'v')
+        {
+            float x,y,z;
+
+            sscanf(buffer, "%*[^ ]%f %f %f", &x, &y, &z);
+
+            vertices.push_back(x);
+            vertices.push_back(y);
+            vertices.push_back(z);
+        }
+        else if(buffer[0] == 'f')
+        {
+            int f1, f2, f3;
+
+            sscanf(buffer, "%*[^ ]%i%*[^ ]%i%*[^ ]%i", &f1, &f2, &f3);
+
+            index.push_back(f1-1);
+            index.push_back(f2-1);
+            index.push_back(f3-1);
+        }
+    }
+
     // Create a Vertex Buffer Object and copy the vertex data to it
     GLuint vbo;
     glGenBuffers(1, &vbo);
 
-    GLfloat vertices[] = {
-        0.05f, 0.05f, -0.05f,
-        0.05f, -0.05f, 0.0f,
-        -0.05f, -0.05f, 0.0f
-    };
-
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices) * sizeof(float), vertices, GL_STATIC_DRAW);
-
-    unsigned int index[] = {
-        0, 1, 2
-    };
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), &vertices[0], GL_STATIC_DRAW);
 
     //IBO
     GLuint ibo;
     glGenBuffers(1, &ibo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index) * sizeof(unsigned int), index, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, index.size() * sizeof(unsigned int), &index[0], GL_STATIC_DRAW);
 
     // Create and compile the vertex shader
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -167,14 +193,14 @@ int main()
         int x, y;
         SDL_GetMouseState(&x, &y);
 
-        cout<<"X: "<<x<<"\nY: "<<y<<"\n";
+        //cout<<"X: "<<x<<"\nY: "<<y<<"\n";
 
         myFlock->Update();
 
         for(unsigned int i = 0; i < 100; ++i)
         {
             glUniformMatrix4fv(uTrans, 1, GL_FALSE, glm::value_ptr(myFlock->members[i]->GetTransformation()));
-            glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+            glDrawElements(GL_TRIANGLES, index.size(), GL_UNSIGNED_INT, 0);
         }
 
         // Swap buffers
