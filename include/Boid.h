@@ -23,6 +23,8 @@ class Boid
 
 		bool canDraw = false;
 
+        glm::vec3 target;
+
     protected:
     private:
         glm::mat4 trans;
@@ -31,7 +33,6 @@ class Boid
         const float deltaTime = 0.01f;
 
         glm::vec3 pos;
-        glm::vec3 target;
 
         std::array<Boid*, 100> boidList;
 

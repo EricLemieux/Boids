@@ -13,7 +13,7 @@ class Flock
         Flock();
         virtual ~Flock();
 
-        void Update();
+        void Update(glm::vec3 newTarget);
 
         std::array<Boid*, 100> members;
     protected:

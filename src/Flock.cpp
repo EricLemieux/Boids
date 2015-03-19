@@ -16,10 +16,11 @@ Flock::~Flock()
     //dtor
 }
 
-void Flock::Update()
+void Flock::Update(glm::vec3 newTarget)
 {
     for(unsigned int i = 0; i < 100; ++i)
     {
+        members[i]->target = newTarget;
         members[i]->Update(members);
     }
 }

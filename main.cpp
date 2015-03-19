@@ -195,6 +195,9 @@ int main()
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
+    glUniformMatrix4fv(uView, 1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(uProj, 1, GL_FALSE, glm::value_ptr(proj));
+
     SDL_Event event;
     while (true)
     {
@@ -214,24 +217,27 @@ int main()
         int x, y;
         SDL_GetMouseState(&x, &y);
 
+        float relX, relY;
+        relX = (float(x)/(640.0f)) - 1.0f;
+        relY = ((float(y)/(360.0f)) - 1.0f) * -1.0f;
+
+        printf("Mouse: %f, %f\n", relX, relY);
+
         //Update the positions of the remote flock
         net->Recieve(remoteFlock);
 
-        myFlock->Update();
+        glm::vec3 target = glm::vec3(relX * 100.0f, relY * 100.0f,-100.0f);
+        myFlock->Update(target);
 
         for(unsigned int i = 0; i < 100; ++i)
         {
+            //Draw the remote flock
 			if (remoteFlock[i]->canDraw)
 			{
 				glUniformMatrix4fv(uModel, 1, GL_FALSE, glm::value_ptr(remoteFlock[i]->GetTransformation()));
 				glUniform3fv(uColour, 1, remoteColour);
 				glDrawElements(GL_TRIANGLES, index.size(), GL_UNSIGNED_INT, 0);
 			}
-			//Draw the remote flock
-			
-			glUniformMatrix4fv(uView, 1, GL_FALSE, glm::value_ptr(view));
-			glUniformMatrix4fv(uProj, 1, GL_FALSE, glm::value_ptr(proj));
-			
 
 			//Draw the local flock
             glUniformMatrix4fv(uModel, 1, GL_FALSE, glm::value_ptr(myFlock->members[i]->GetTransformation()));
