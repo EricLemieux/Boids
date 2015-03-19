@@ -102,6 +102,8 @@ void Boid::Update(std::array<Boid*, 100> otherBoids)
     trans[2][2] = newForward[2];
 
     trans[3] = glm::vec4(pos, 1.0f);
+
+	canDraw = true;
 }
 
 void Boid::RemoteUpdate(glm::vec3 position, glm::vec3 newForward)
@@ -122,6 +124,8 @@ void Boid::RemoteUpdate(glm::vec3 position, glm::vec3 newForward)
     trans[2][2] = newForward[2];
 
     trans[3] = glm::vec4(position, 1.0f);
+
+	canDraw = true;
 }
 
 void Boid::SeperationCalc(int count)

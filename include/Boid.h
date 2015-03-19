@@ -21,6 +21,8 @@ class Boid
         inline glm::vec3 GetPos(){return pos;}
         inline glm::vec3 GetVelocity(){return velocity;}
 
+		bool canDraw = false;
+
     protected:
     private:
         glm::mat4 trans;

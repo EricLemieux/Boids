@@ -9,6 +9,7 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <time.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -181,6 +182,11 @@ int main()
 
     Boid* remoteFlock[100];
 
+	for (unsigned int i = 0; i < 100; ++i)
+	{
+		remoteFlock[i] = new Boid();
+	}
+
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     SDL_Event event;
@@ -209,11 +215,22 @@ int main()
 
         for(unsigned int i = 0; i < 100; ++i)
         {
+			if (remoteFlock[i]->canDraw)
+			{
+				glUniformMatrix4fv(uModel, 1, GL_FALSE, glm::value_ptr(remoteFlock[i]->GetTransformation()));
+				glDrawElements(GL_TRIANGLES, index.size(), GL_UNSIGNED_INT, 0);
+			}
+			//Draw the remote flock
+			
+			glUniformMatrix4fv(uView, 1, GL_FALSE, glm::value_ptr(view));
+			glUniformMatrix4fv(uProj, 1, GL_FALSE, glm::value_ptr(proj));
+			
+
+			//Draw the local flock
             glUniformMatrix4fv(uModel, 1, GL_FALSE, glm::value_ptr(myFlock->members[i]->GetTransformation()));
-            glUniformMatrix4fv(uView, 1, GL_FALSE, glm::value_ptr(view));
-            glUniformMatrix4fv(uProj, 1, GL_FALSE, glm::value_ptr(proj));
             glDrawElements(GL_TRIANGLES, index.size(), GL_UNSIGNED_INT, 0);
 
+			//Send the local flock to the other computer
             char buffer[512];
             sprintf(buffer, "%i %f %f %f - %f %f %f",i,myFlock->members[i]->GetTransformation()[3].x, myFlock->members[i]->GetTransformation()[3].y, myFlock->members[i]->GetTransformation()[3].z,
             myFlock->members[i]->GetTransformation()[0][2], myFlock->members[i]->GetTransformation()[1][2], myFlock->members[i]->GetTransformation()[2][2]);
