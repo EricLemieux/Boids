@@ -179,6 +179,8 @@ int main()
 
     Flock* myFlock = new Flock();
 
+    Boid* remoteFlock[100];
+
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     SDL_Event event;
@@ -200,7 +202,8 @@ int main()
         int x, y;
         SDL_GetMouseState(&x, &y);
 
-        //cout<<"X: "<<x<<"\nY: "<<y<<"\n";
+        //Update the positions of the remote flock
+        net->Recieve(remoteFlock);
 
         myFlock->Update();
 
@@ -210,6 +213,12 @@ int main()
             glUniformMatrix4fv(uView, 1, GL_FALSE, glm::value_ptr(view));
             glUniformMatrix4fv(uProj, 1, GL_FALSE, glm::value_ptr(proj));
             glDrawElements(GL_TRIANGLES, index.size(), GL_UNSIGNED_INT, 0);
+
+            char buffer[512];
+            sprintf(buffer, "%i %f %f %f - %f %f %f",i,myFlock->members[i]->GetTransformation()[3].x, myFlock->members[i]->GetTransformation()[3].y, myFlock->members[i]->GetTransformation()[3].z,
+            myFlock->members[i]->GetTransformation()[0][2], myFlock->members[i]->GetTransformation()[1][2], myFlock->members[i]->GetTransformation()[2][2]);
+
+            net->Send(std::string(buffer));
         }
 
         // Swap buffers

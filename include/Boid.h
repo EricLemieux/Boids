@@ -16,6 +16,7 @@ class Boid
         inline glm::mat4 GetTransformation(){return trans;};
 
         void Update(std::array<Boid*, 100> otherBoids);
+        void RemoteUpdate(glm::vec3 position, glm::vec3 newForward);
 
         inline glm::vec3 GetPos(){return pos;}
         inline glm::vec3 GetVelocity(){return velocity;}

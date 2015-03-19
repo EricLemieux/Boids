@@ -104,6 +104,26 @@ void Boid::Update(std::array<Boid*, 100> otherBoids)
     trans[3] = glm::vec4(pos, 1.0f);
 }
 
+void Boid::RemoteUpdate(glm::vec3 position, glm::vec3 newForward)
+{
+    glm::vec3 oldUp = glm::vec3(trans[0][1], trans[1][1], trans[2][1]);
+
+    glm::vec3 newRight = glm::cross(oldUp, newForward);
+    glm::vec3 newUp = glm::cross(newForward, newRight);
+
+    trans[0][0] = newRight[0];
+    trans[0][1] = newUp[0];
+    trans[0][2] = newForward[0];
+    trans[1][0] = newRight[1];
+    trans[1][1] = newUp[1];
+    trans[1][2] = newForward[1];
+    trans[2][0] = newRight[2];
+    trans[2][1] = newUp[2];
+    trans[2][2] = newForward[2];
+
+    trans[3] = glm::vec4(position, 1.0f);
+}
+
 void Boid::SeperationCalc(int count)
 {
     if(count > 0)

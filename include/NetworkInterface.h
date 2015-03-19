@@ -5,6 +5,8 @@
 #include <raknet/MessageIdentifiers.h>
 #include <iostream>
 
+#include "Boid.h"
+
 class NetworkInterface
 {
     public:
@@ -13,7 +15,7 @@ class NetworkInterface
 
         virtual void Activate(const char* address);
         virtual void Send(std::string message);
-        virtual std::string Recieve();
+        virtual void Recieve(Boid* flock[100]);
 
         virtual std::string GetType();
     protected:

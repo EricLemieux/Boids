@@ -33,7 +33,7 @@ void Server::Send(std::string message)
 	netInterface->Send(message.c_str(), message.length(), HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
 }
 
-std::string Server::Recieve()
+void Server::Recieve(Boid* flock[100])
 {
 	while ((packet = netInterface->Receive()) != NULL)
 	{
@@ -53,11 +53,13 @@ std::string Server::Recieve()
 		{
             std::string str = std::string((char*)packet->data).substr(0, packet->length);
 
+            int id;
+            glm::vec3 pos, forwardVec;
+            sscanf(str.c_str(),"%i %f %f %f - %f %f %f",&id,&pos.x,&pos.y,&pos.z,&forwardVec.x, &forwardVec.y, &forwardVec.z);
+            flock[id]->RemoteUpdate(pos, forwardVec);
 		}
 		netInterface->DeallocatePacket(packet);
     }
-
-	return std::string("");
 }
 
 std::string Server::GetType()

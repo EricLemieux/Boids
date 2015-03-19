@@ -20,9 +20,8 @@ void NetworkInterface::Send(std::string)
 
 }
 
-std::string NetworkInterface::Recieve()
+void NetworkInterface::Recieve(Boid* flock[100])
 {
-	return std::string("");
 }
 
 std::string NetworkInterface::GetType()
