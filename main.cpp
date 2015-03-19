@@ -226,7 +226,7 @@ int main()
         //Update the positions of the remote flock
         net->Recieve(remoteFlock);
 
-        glm::vec3 target = glm::vec3(relX * 100.0f, relY * 100.0f,-100.0f);
+        glm::vec3 target = glm::vec3(relX * 110.0f, relY * 70.0f,-100.0f);
         myFlock->Update(target);
 
         for(unsigned int i = 0; i < 100; ++i)

@@ -66,7 +66,7 @@ void Boid::Update(std::array<Boid*, 100> otherBoids)
 
     glm::vec3 targetForce = target - this->pos;
     targetForce = glm::normalize(targetForce) * maxForce;
-    acceleration += targetForce;
+    acceleration += targetForce * 5.0f;
 
     SeperationCalc(seperationCount);
     AlignmentCalc(alignmentCount, sum);
@@ -140,7 +140,7 @@ void Boid::SeperationCalc(int count)
         steerValue *= maxForce;
     }
 
-    acceleration += steerValue;
+    acceleration += steerValue * 1.0f;
 }
 
 void Boid::AlignmentCalc(int count, glm::vec3 sum)
@@ -155,7 +155,7 @@ void Boid::AlignmentCalc(int count, glm::vec3 sum)
             steer = glm::normalize(steer);
         steer *= maxForce;
 
-        acceleration += steer;
+        acceleration += steer * 2.0f;
     }
 }
 
@@ -170,7 +170,7 @@ void Boid::CohesionCalc(int count, glm::vec3 sum)
         if(glm::length(steer) > 0)
             steer = glm::normalize(steer);
         steer *= maxForce;
-        acceleration += steer;
+        acceleration += steer * 3.0f;
     }
 
 }
