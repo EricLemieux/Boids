@@ -20,7 +20,7 @@ void Client::Activate(const char* address)
 	RakNet::StartupResult res = netInterface->Startup(1, sockDesc, 1);
     assert(res == RakNet::RAKNET_STARTED && "client Count Not Connect.\n");
 
-	RakNet::ConnectionAttemptResult conRes = netInterface->Connect("localhost", serverPort, password, strlen(password));
+	RakNet::ConnectionAttemptResult conRes = netInterface->Connect(address, serverPort, password, strlen(password));
     assert(conRes == RakNet::CONNECTION_ATTEMPT_STARTED && "Client could not connect.\n");
 }
 
