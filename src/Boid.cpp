@@ -12,9 +12,9 @@ Boid::Boid()
     target.y = 0;
     target.z = -50;
 
-    maxForce.x = 10.f;
-    maxForce.y = 10.f;
-    maxForce.z = 10.f;
+    maxForce.x = 30.f;
+    maxForce.y = 30.f;
+    maxForce.z = 30.f;
 
     velocity.x = float(rand()% 500 - 250);
     velocity.y = float(rand()% 500 - 250);
@@ -140,7 +140,7 @@ void Boid::SeperationCalc(int count)
         steerValue *= maxForce;
     }
 
-    acceleration += steerValue * 1.0f;
+    acceleration += steerValue * 2.0f;
 }
 
 void Boid::AlignmentCalc(int count, glm::vec3 sum)
