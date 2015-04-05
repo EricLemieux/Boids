@@ -102,8 +102,23 @@ void Boid::Update(std::array<Boid*, BOID_COUNT> otherBoids)
 	canDraw = true;
 }
 
-void Boid::RemoteUpdate(glm::vec3 position, glm::vec3 newForward)
+void Boid::RemoteUpdate(float t)
 {
+	timeSinceLastUpdate += t;
+	std::cout << timeSinceLastUpdate / expectedTimeBetweenUpdates << "\n";
+	glm::vec3 p = (1 - timeSinceLastUpdate / expectedTimeBetweenUpdates)*currentPosition + timeSinceLastUpdate / expectedTimeBetweenUpdates*futurePosition;
+
+	trans[3] = glm::vec4(p, 0.0f);
+}
+
+void Boid::SetRemote(glm::vec3 position, glm::vec3 newForward)
+{
+	timeSinceLastUpdate = 0.0f;
+
+	previousPosition = currentPosition;
+	currentPosition = position;
+	futurePosition = (currentPosition - previousPosition) + currentPosition;
+
     glm::vec3 oldUp = glm::vec3(trans[0][1], trans[1][1], trans[2][1]);
 
     glm::vec3 newRight = glm::cross(oldUp, newForward);

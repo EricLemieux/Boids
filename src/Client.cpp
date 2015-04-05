@@ -40,7 +40,7 @@ void Client::Recieve(Boid* flock[BOID_COUNT])
         sscanf(str.c_str(),"%i %f %f %f - %f %f %f",&id,&pos.x,&pos.y,&pos.z,&forwardVec.x, &forwardVec.y, &forwardVec.z);
 		if (id < BOID_COUNT && id >= 0)
 		{
-			flock[id]->RemoteUpdate(pos, forwardVec);
+			flock[id]->SetRemote(pos, forwardVec);
 		}
 
 		netInterface->DeallocatePacket(packet);

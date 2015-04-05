@@ -3,9 +3,16 @@
 
 #include <array>
 
+#include <iostream>
+
 #include <glm/glm.hpp>
+#include <glm/common.hpp>
+#include <glm/geometric.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+
+static float expectedTimeBetweenUpdates = 0.1f;
 
 static const int BOID_COUNT = 100;
 
@@ -18,7 +25,8 @@ class Boid
         inline glm::mat4 GetTransformation(){return trans;};
 
         void Update(std::array<Boid*, BOID_COUNT> otherBoids);
-        void RemoteUpdate(glm::vec3 position, glm::vec3 newForward);
+		void RemoteUpdate(float t);
+		void SetRemote(glm::vec3 position, glm::vec3 newForward);
 
         inline glm::vec3 GetPos(){return pos;}
         inline glm::vec3 GetVelocity(){return velocity;}
@@ -47,6 +55,12 @@ class Boid
         glm::vec3 velocity;
         glm::vec3 acceleration;
         glm::vec3 maxForce;
+
+		glm::vec3 previousPosition;
+		glm::vec3 currentPosition;
+		glm::vec3 futurePosition;
+
+		float timeSinceLastUpdate = 0.0f;
 };
 
 #endif // BOID_H

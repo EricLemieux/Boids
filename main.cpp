@@ -198,10 +198,13 @@ int main()
     glUniformMatrix4fv(uView, 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(uProj, 1, GL_FALSE, glm::value_ptr(proj));
 
+	float dt = 0.0001f, timeBetweenUpdates = 0.01f, timeSinceLastUpdateSent = 0.0f;
+
     SDL_Event event;
     while (true)
     {
-        time += 0.0001f;
+        time += dt;
+		timeSinceLastUpdateSent += dt;
 
         if(SDL_PollEvent(&event))
         {
@@ -232,6 +235,9 @@ int main()
             //Draw the remote flock
 			if (remoteFlock[i]->canDraw)
 			{
+				//Update the position of the remote boid
+				remoteFlock[i]->RemoteUpdate(dt*10);
+
 				glUniformMatrix4fv(uModel, 1, GL_FALSE, glm::value_ptr(remoteFlock[i]->GetTransformation()));
 				glUniform3fv(uColour, 1, remoteColour);
 				glDrawElements(GL_TRIANGLES, index.size(), GL_UNSIGNED_INT, 0);
@@ -247,7 +253,11 @@ int main()
             sprintf(buffer, "%i %f %f %f - %f %f %f",i,myFlock->members[i]->GetTransformation()[3].x, myFlock->members[i]->GetTransformation()[3].y, myFlock->members[i]->GetTransformation()[3].z,
             myFlock->members[i]->GetTransformation()[2][0], myFlock->members[i]->GetTransformation()[2][1], myFlock->members[i]->GetTransformation()[2][2]);
 
-            net->Send(std::string(buffer));
+			if (timeSinceLastUpdateSent >= timeBetweenUpdates)
+			{
+				net->Send(std::string(buffer));
+				timeSinceLastUpdateSent = 0.0f;
+			}
         }
 
         // Swap buffers

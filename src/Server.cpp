@@ -56,7 +56,7 @@ void Server::Recieve(Boid* flock[BOID_COUNT])
             int id;
             glm::vec3 pos, forwardVec;
             sscanf(str.c_str(),"%i %f %f %f - %f %f %f",&id,&pos.x,&pos.y,&pos.z,&forwardVec.x, &forwardVec.y, &forwardVec.z);
-            flock[id]->RemoteUpdate(pos, forwardVec);
+			flock[id]->SetRemote(pos, forwardVec);
 		}
 		netInterface->DeallocatePacket(packet);
     }
