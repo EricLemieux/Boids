@@ -198,7 +198,7 @@ int main()
     glUniformMatrix4fv(uView, 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(uProj, 1, GL_FALSE, glm::value_ptr(proj));
 
-	float dt = 0.0001f, timeBetweenUpdates = 0.01f, timeSinceLastUpdateSent = 0.0f;
+	float dt = 0.0001f, timeBetweenUpdates = 0.001f, timeSinceLastUpdateSent = 0.0f;
 
     SDL_Event event;
     while (true)
@@ -236,7 +236,7 @@ int main()
 			if (remoteFlock[i]->canDraw)
 			{
 				//Update the position of the remote boid
-				remoteFlock[i]->RemoteUpdate(dt*10);
+				remoteFlock[i]->RemoteUpdate(dt*100);
 
 				glUniformMatrix4fv(uModel, 1, GL_FALSE, glm::value_ptr(remoteFlock[i]->GetTransformation()));
 				glUniform3fv(uColour, 1, remoteColour);
@@ -248,17 +248,22 @@ int main()
 			glUniform3fv(uColour, 1, localColour);
             glDrawElements(GL_TRIANGLES, index.size(), GL_UNSIGNED_INT, 0);
 
-			//Send the local flock to the other computer
-            char buffer[512];
-            sprintf(buffer, "%i %f %f %f - %f %f %f",i,myFlock->members[i]->GetTransformation()[3].x, myFlock->members[i]->GetTransformation()[3].y, myFlock->members[i]->GetTransformation()[3].z,
-            myFlock->members[i]->GetTransformation()[2][0], myFlock->members[i]->GetTransformation()[2][1], myFlock->members[i]->GetTransformation()[2][2]);
+			
+        }
 
-			if (timeSinceLastUpdateSent >= timeBetweenUpdates)
+		//Send the local flock to the other computer
+		if (timeSinceLastUpdateSent >= timeBetweenUpdates)
+		{
+			for (unsigned int i = 0; i < BOID_COUNT; ++i)
 			{
+				char buffer[512];
+				sprintf(buffer, "%i %f %f %f - %f %f %f", i, myFlock->members[i]->GetTransformation()[3].x, myFlock->members[i]->GetTransformation()[3].y, myFlock->members[i]->GetTransformation()[3].z,
+				myFlock->members[i]->GetTransformation()[2][0], myFlock->members[i]->GetTransformation()[2][1], myFlock->members[i]->GetTransformation()[2][2]);
+
 				net->Send(std::string(buffer));
 				timeSinceLastUpdateSent = 0.0f;
 			}
-        }
+		}
 
         // Swap buffers
         SDL_GL_SwapWindow(win);

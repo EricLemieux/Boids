@@ -19,6 +19,9 @@ Boid::Boid()
     velocity.x = float(rand()% 500 - 250);
     velocity.y = float(rand()% 500 - 250);
     velocity.z = float(rand()% 500 - 250);
+
+	currentPosition = pos;
+	futurePosition = pos;
 }
 
 Boid::~Boid()
@@ -90,12 +93,12 @@ void Boid::Update(std::array<Boid*, BOID_COUNT> otherBoids)
 	trans[0][0] = newRight[0];
 	trans[0][1] = newRight[1];
 	trans[0][2] = newRight[2];
-	trans[1][0] = newUp[2];
+	trans[1][0] = newUp[0];
 	trans[1][1] = newUp[1];
-	trans[1][2] = newUp[0];
-	trans[2][0] = newForward[2];
+	trans[1][2] = newUp[2];
+	trans[2][0] = newForward[0];
 	trans[2][1] = newForward[1];
-	trans[2][2] = newForward[0];
+	trans[2][2] = newForward[2];
 
     trans[3] = glm::vec4(pos, 1.0f);
 
@@ -105,10 +108,9 @@ void Boid::Update(std::array<Boid*, BOID_COUNT> otherBoids)
 void Boid::RemoteUpdate(float t)
 {
 	timeSinceLastUpdate += t;
-	std::cout << timeSinceLastUpdate / expectedTimeBetweenUpdates << "\n";
-	glm::vec3 p = (1 - timeSinceLastUpdate / expectedTimeBetweenUpdates)*currentPosition + timeSinceLastUpdate / expectedTimeBetweenUpdates*futurePosition;
+	glm::vec3 p = ((1 - timeSinceLastUpdate / expectedTimeBetweenUpdates)*currentPosition) + ((timeSinceLastUpdate / expectedTimeBetweenUpdates)*futurePosition);
 
-	trans[3] = glm::vec4(p, 0.0f);
+	trans[3] = glm::vec4(p, 1.0f);
 }
 
 void Boid::SetRemote(glm::vec3 position, glm::vec3 newForward)
@@ -127,12 +129,12 @@ void Boid::SetRemote(glm::vec3 position, glm::vec3 newForward)
 	trans[0][0] = newRight[0];
 	trans[0][1] = newRight[1];
 	trans[0][2] = newRight[2];
-	trans[1][0] = newUp[2];
+	trans[1][0] = newUp[0];
 	trans[1][1] = newUp[1];
-	trans[1][2] = newUp[0];
-	trans[2][0] = newForward[2];
+	trans[1][2] = newUp[2];
+	trans[2][0] = newForward[0];
 	trans[2][1] = newForward[1];
-	trans[2][2] = newForward[0];
+	trans[2][2] = newForward[2];
 
     trans[3] = glm::vec4(position, 1.0f);
 
