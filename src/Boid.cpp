@@ -1,5 +1,7 @@
 #include "Boid.h"
 
+
+
 Boid::Boid()
 {
     trans = glm::mat4();
@@ -118,8 +120,8 @@ void Boid::SetRemote(glm::vec3 position, glm::vec3 newForward)
 	timeSinceLastUpdate = 0.0f;
 
 	previousPosition = currentPosition;
-	currentPosition = position;
-	futurePosition = (currentPosition - previousPosition) + currentPosition;
+	currentPosition = glm::vec3(trans[3].x, trans[3].t, trans[3].z);
+	futurePosition = (position - previousPosition) + position;
 
     glm::vec3 oldUp = glm::vec3(trans[0][1], trans[1][1], trans[2][1]);
 
@@ -135,8 +137,6 @@ void Boid::SetRemote(glm::vec3 position, glm::vec3 newForward)
 	trans[2][0] = newForward[0];
 	trans[2][1] = newForward[1];
 	trans[2][2] = newForward[2];
-
-    trans[3] = glm::vec4(position, 1.0f);
 
 	canDraw = true;
 }

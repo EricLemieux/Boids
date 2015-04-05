@@ -52,11 +52,22 @@ void Server::Recieve(Boid* flock[BOID_COUNT])
 		else
 		{
             std::string str = std::string((char*)packet->data).substr(0, packet->length);
+			
+			auto p = str.find(" ");
+			std::string phrase = str.substr(0, p);
 
-            int id;
-            glm::vec3 pos, forwardVec;
-            sscanf(str.c_str(),"%i %f %f %f - %f %f %f",&id,&pos.x,&pos.y,&pos.z,&forwardVec.x, &forwardVec.y, &forwardVec.z);
-			flock[id]->SetRemote(pos, forwardVec);
+			if (phrase == "delay")
+			{
+				sscanf_s(str.c_str(), "%*[^ ] %f", &expectedTimeBetweenUpdates);
+				std::cout << expectedTimeBetweenUpdates << "\n";
+			}
+			else
+			{
+				int id;
+				glm::vec3 pos, forwardVec;
+				sscanf(str.c_str(), "%i %f %f %f - %f %f %f", &id, &pos.x, &pos.y, &pos.z, &forwardVec.x, &forwardVec.y, &forwardVec.z);
+				flock[id]->SetRemote(pos, forwardVec);
+			}
 		}
 		netInterface->DeallocatePacket(packet);
     }

@@ -6,6 +6,7 @@
 #include <GL/gl.h>
 #include <SDL2/SDL.h>
 #undef main
+#include <time.h>
 #include <iostream>
 #include <vector>
 #include <fstream>
@@ -21,6 +22,8 @@
 
 #include "Flock.h"
 #include "Boid.h"
+
+float expectedTimeBetweenUpdates = 5.0f;
 
 // Shader sources
 const GLchar* vertexSource =
@@ -149,9 +152,7 @@ int main()
 
     glm::mat4 view = glm::lookAt(glm::vec3(0,0,10), glm::vec3(0,0,0), glm::vec3(0,1,0));
     glm::mat4 proj = glm::perspective(glm::radians(60.0f), 1280.0f/720.0f, 0.01f, 10000.0f);
-
-    float time = 0.0f;
-
+	
     //Set up the network stuff
     NetworkInterface* net;
     cout<<"Should this computer act as the Server or Client?\n 1 for server, 2 for client.\n";
@@ -198,13 +199,15 @@ int main()
     glUniformMatrix4fv(uView, 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(uProj, 1, GL_FALSE, glm::value_ptr(proj));
 
-	float dt = 0.0001f, timeBetweenUpdates = 0.001f, timeSinceLastUpdateSent = 0.0f;
+	clock_t startTime = clock();
+	double timeSinceLastUpdateSent = 0.0, deltaTime = 0.0f;
 
     SDL_Event event;
     while (true)
     {
-        time += dt;
-		timeSinceLastUpdateSent += dt;
+		deltaTime = double(clock() - startTime)/CLOCKS_PER_SEC;
+		startTime = clock();
+		timeSinceLastUpdateSent += deltaTime;
 
         if(SDL_PollEvent(&event))
         {
@@ -212,6 +215,27 @@ int main()
             {
                 break;
             }
+
+			if (event.type == SDL_KEYDOWN)
+			{
+				switch (event.key.keysym.sym)
+				{
+				case SDLK_q:
+					expectedTimeBetweenUpdates -= 0.1f;
+					std::cout << "Time between network updates: " << expectedTimeBetweenUpdates << "\n";
+					char b[32];
+					sprintf_s(b, "delay %f",expectedTimeBetweenUpdates);
+					net->Send(b);
+					break;
+				case SDLK_w:
+					expectedTimeBetweenUpdates += 0.1f;
+					std::cout << "Time between network updates: " << expectedTimeBetweenUpdates << "\n";
+					char bu[32];
+					sprintf_s(bu, "delay %f", expectedTimeBetweenUpdates);
+					net->Send(bu);
+					break;
+				}
+			}
         }
 
         glClear(GL_COLOR_BUFFER_BIT);
@@ -236,7 +260,7 @@ int main()
 			if (remoteFlock[i]->canDraw)
 			{
 				//Update the position of the remote boid
-				remoteFlock[i]->RemoteUpdate(dt*100);
+				remoteFlock[i]->RemoteUpdate(float(deltaTime));
 
 				glUniformMatrix4fv(uModel, 1, GL_FALSE, glm::value_ptr(remoteFlock[i]->GetTransformation()));
 				glUniform3fv(uColour, 1, remoteColour);
@@ -252,7 +276,7 @@ int main()
         }
 
 		//Send the local flock to the other computer
-		if (timeSinceLastUpdateSent >= timeBetweenUpdates)
+		if (timeSinceLastUpdateSent >= expectedTimeBetweenUpdates)
 		{
 			for (unsigned int i = 0; i < BOID_COUNT; ++i)
 			{
@@ -261,7 +285,7 @@ int main()
 				myFlock->members[i]->GetTransformation()[2][0], myFlock->members[i]->GetTransformation()[2][1], myFlock->members[i]->GetTransformation()[2][2]);
 
 				net->Send(std::string(buffer));
-				timeSinceLastUpdateSent = 0.0f;
+				timeSinceLastUpdateSent = 0.0;
 			}
 		}
 

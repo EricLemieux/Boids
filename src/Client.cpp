@@ -35,14 +35,25 @@ void Client::Recieve(Boid* flock[BOID_COUNT])
     {
         std::string str = std::string((char*)packet->data).substr(0, packet->length);
 
-        int id;
-        glm::vec3 pos, forwardVec;
-        sscanf(str.c_str(),"%i %f %f %f - %f %f %f",&id,&pos.x,&pos.y,&pos.z,&forwardVec.x, &forwardVec.y, &forwardVec.z);
-		if (id < BOID_COUNT && id >= 0)
-		{
-			flock[id]->SetRemote(pos, forwardVec);
-		}
+		auto p = str.find(" ");
+		std::string phrase = str.substr(0, p);
 
+		if (phrase == "delay")
+		{
+			sscanf_s(str.c_str(), "%*[^ ] %f", &expectedTimeBetweenUpdates);
+			std::cout << expectedTimeBetweenUpdates << "\n";
+		}
+		else
+		{
+			int id;
+			glm::vec3 pos, forwardVec;
+			sscanf(str.c_str(), "%i %f %f %f - %f %f %f", &id, &pos.x, &pos.y, &pos.z, &forwardVec.x, &forwardVec.y, &forwardVec.z);
+			if (id < BOID_COUNT && id >= 0)
+			{
+				flock[id]->SetRemote(pos, forwardVec);
+			}
+		}
+		
 		netInterface->DeallocatePacket(packet);
     }
 }

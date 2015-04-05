@@ -11,8 +11,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-
-static float expectedTimeBetweenUpdates = 0.1f;
+extern float expectedTimeBetweenUpdates;
 
 static const int BOID_COUNT = 100;
 
